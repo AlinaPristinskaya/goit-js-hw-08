@@ -2,6 +2,7 @@ import galleryEl from "./gallery-items.js";
 const modal = document.querySelector(".lightbox");
 
 const parentEl = document.querySelector(".js-gallery");
+const originalImg = document.querySelector(".lightbox__image");
 
 const cardGallery = createProducts(galleryEl);
 function createProducts(galleryEl) {
@@ -10,7 +11,7 @@ function createProducts(galleryEl) {
       return `<li class="gallery__item">
       <a
         class="gallery__link"
-        href=""
+        href="${original}"
       > 
         <img
           class="gallery__image"
@@ -24,20 +25,30 @@ function createProducts(galleryEl) {
     .join("");
 }
 parentEl.insertAdjacentHTML("beforeend", cardGallery);
-window.addEventListener("click", onModalOpenClick);
-function onModalOpenClick(evt) {
-  /* const itemImage = evt.target.classList.contains(".gallery__image");
-  const itemLink = evt.target.classList.contains("gallery__link");
-  const itemLi = evt.target.classList.contains("gallery__item");
-  if (itemImage)  */ {
-    console.log("onModalOpenClick");
-    console.log("onModalOpenClick => evt.target", evt.target);
-    console.log("onModalOpenClick=>evt.currentTarget", evt.currentTarget);
-  }
-}
-//modal.classList.add("is-open");
-/* if (modalOpen) {
-  const imageOpen = document.querySelector("img.lightbox__image");
-  console.log(imageOpen);
-} */
 
+parentEl.addEventListener("click", onModalOpenClick);
+function onModalOpenClick(evt) {
+  evt.preventDefault();
+
+  if (evt.target.nodeName !== "IMG") {
+    return;
+  }
+
+  modal.classList.add("is-open");
+
+  originalImg.src = evt.target.dataset.source;
+  originalImg.alt = evt.target.alt;
+}
+//const buttonCloseModal = document.querySelector(".lightbox__button");
+window.addEventListener("click", onClose);
+function onClose(evt) {
+  console.log(evt.target.classList);
+  if (
+    evt.target.nodeName === "BUTTON" ||
+    evt.target.classList.contains("lightbox__overlay")
+  ) {
+    originalImg.src = "";
+    modal.classList.remove("is-open");
+  }
+  return;
+}
